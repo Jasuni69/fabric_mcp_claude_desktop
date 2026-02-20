@@ -1,0 +1,6 @@
+fabric-core/.venv/
+fabric-core/__pycache__/
+**/__pycache__/
+**/*.pyc
+*.log
+.mcp.json

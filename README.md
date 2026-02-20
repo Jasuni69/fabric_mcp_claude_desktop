@@ -1,14 +1,14 @@
-# fabric-mcp-standalone
+# Fabric & Power BI MCP for Claude Desktop
 
-Fabric & Power BI MCP servers for **Claude Desktop** — no VS Code needed.
+Three MCP servers for Microsoft Fabric and Power BI — no VS Code required.
 
-## What's included
+## Servers
 
 | Server | Tools | Description |
 |--------|-------|-------------|
 | `fabric-core` | 138+ | Workspaces, lakehouses, SQL, DAX, notebooks, pipelines, OneLake, Git, CI/CD |
-
-> **Not included:** `powerbi-modeling` and `powerbi-translation-audit` — both require the VS Code extension.
+| `powerbi-modeling` | 50+ | Live semantic model editing (requires Power BI Desktop open) |
+| `powerbi-translation-audit` | 3 | Scan .pbip reports for untranslated content |
 
 ## Prerequisites
 
@@ -17,35 +17,35 @@ Fabric & Power BI MCP servers for **Claude Desktop** — no VS Code needed.
 | Python 3.12+ | https://python.org |
 | uv | https://docs.astral.sh/uv/getting-started/installation/ |
 | Azure CLI | https://aka.ms/installazurecliwindows |
+| Power BI Desktop | https://powerbi.microsoft.com/desktop (for powerbi-modeling only) |
 
 ## Setup
 
 ```bash
-# 1. Run setup (one time)
+git clone https://github.com/Jasuni69/fabric_mcp_claude_desktop.git
+cd fabric_mcp_claude_desktop
 python setup.py
-
-# 2. Log in to Azure (required for Fabric API access)
-az login
-
-# 3. Restart Claude Desktop
 ```
 
-That's it. The setup script:
-- Installs Python deps via `uv sync`
+Then restart Claude Desktop.
+
+`setup.py`:
+- Installs fabric-core deps via `uv sync`
 - Creates a venv for translation-audit
-- Writes server entries into `claude_desktop_config.json`
+- Downloads `powerbi-modeling-mcp.exe` from the VS Marketplace (or reuses existing VS Code install)
+- Writes all servers into `claude_desktop_config.json` — merges safely with existing config
+
+## Authentication
+
+```bash
+az login
+```
+
+Required for all fabric-core tools. Run once — token is cached.
 
 ## Usage
 
-In Claude Desktop, the `fabric-core` tools are available immediately after restart.
-
-Start with context:
+Start with:
 ```
 set_workspace → set_lakehouse → list_tables → sql_query
 ```
-
-See `CLAUDE.md` for full rules and `CLAUDE.md` + `.claude/agents/` for domain-specific guidance.
-
-## Updating
-
-Pull new code, then re-run `python setup.py`. Config paths are stable so it merges safely.

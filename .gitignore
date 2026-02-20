@@ -1,6 +1,6 @@
 fabric-core/.venv/
+powerbi-modeling/.venv/
 translation-audit/.venv/
-bin/
 **/__pycache__/
 **/*.pyc
 *.log

@@ -7,7 +7,7 @@ Three MCP servers for Microsoft Fabric and Power BI — no VS Code required.
 | Server | Tools | Description |
 |--------|-------|-------------|
 | `fabric-core` | 138+ | Workspaces, lakehouses, SQL, DAX, notebooks, pipelines, OneLake, Git, CI/CD |
-| `powerbi-modeling` | 50+ | Live semantic model editing (requires Power BI Desktop open) |
+| `powerbi-modeling` | 15+ | Live semantic model editing via TOM API (requires Power BI Desktop open) |
 | `powerbi-translation-audit` | 3 | Scan .pbip reports for untranslated content |
 
 ## Prerequisites

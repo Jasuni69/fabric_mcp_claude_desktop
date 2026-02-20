@@ -73,35 +73,18 @@ else:
     )
     print("  Azure auth OK." if result.returncode == 0 else "  WARNING: Not logged in. Run 'az login'.")
 
-# ── Step 3: fabric-core deps ──────────────────────────────────────────────────
-step(3, "Installing fabric-core dependencies (may take a minute)...")
-run([uv, "sync"], cwd=FABRIC_CORE)
-print("  Done.")
+# ── Step 3: install all servers ───────────────────────────────────────────────
+for name, path in [
+    ("fabric-core", FABRIC_CORE),
+    ("powerbi-modeling", POWERBI_MODELING),
+    ("translation-audit", TRANSLATION_AUDIT),
+]:
+    step(f"3/{name}", f"Installing {name} dependencies...")
+    run([uv, "sync"], cwd=path)
+    print("  Done.")
 
-# ── Step 4: powerbi-modeling deps ─────────────────────────────────────────────
-step(4, "Installing powerbi-modeling dependencies...")
-run([uv, "sync"], cwd=POWERBI_MODELING)
-print("  Done.")
-
-# ── Step 5: translation-audit venv ───────────────────────────────────────────
-step(5, "Setting up translation-audit virtual environment...")
-venv_dir = TRANSLATION_AUDIT / ".venv"
-python = shutil.which("python3") or shutil.which("python")
-if not python:
-    print("  ERROR: Python not found on PATH.")
-    sys.exit(1)
-run([python, "-m", "venv", str(venv_dir)])
-if platform.system() == "Windows":
-    venv_python = venv_dir / "Scripts" / "python.exe"
-    venv_pip = venv_dir / "Scripts" / "pip.exe"
-else:
-    venv_python = venv_dir / "bin" / "python"
-    venv_pip = venv_dir / "bin" / "pip"
-run([str(venv_pip), "install", "--quiet", "mcp"])
-print("  Done.")
-
-# ── Step 6: write Claude Desktop config ──────────────────────────────────────
-step(6, "Writing Claude Desktop config...")
+# ── Step 4: write Claude Desktop config ──────────────────────────────────────
+step(4, "Writing Claude Desktop config...")
 config_path = get_claude_config_path()
 config_path.parent.mkdir(parents=True, exist_ok=True)
 if config_path.exists():
@@ -117,11 +100,11 @@ config["mcpServers"]["fabric-core"] = {
 }
 config["mcpServers"]["powerbi-modeling"] = {
     "command": uv,
-    "args": ["--directory", str(POWERBI_MODELING), "run", "powerbi-modeling-mcp"],
+    "args": ["--directory", str(POWERBI_MODELING), "run", "python", "-m", "powerbi_modeling_mcp"],
 }
 config["mcpServers"]["powerbi-translation-audit"] = {
-    "command": str(venv_python),
-    "args": [str(TRANSLATION_AUDIT / "server.py")],
+    "command": uv,
+    "args": ["--directory", str(TRANSLATION_AUDIT), "run", "python", "server.py"],
 }
 
 with open(config_path, "w") as f:
